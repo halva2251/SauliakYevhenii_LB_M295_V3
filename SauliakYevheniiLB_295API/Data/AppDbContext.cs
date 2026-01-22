@@ -46,13 +46,5 @@ public class AppDbContext : DbContext
             entity.HasIndex(u => u.Username).IsUnique();
         });
 
-        // Seed default admin user (Password: "admin123")
-        modelBuilder.Entity<User>().HasData(new User
-        {
-            Id = 1,
-            Username = "admin",
-            // BCrypt hash for "admin123"
-            PasswordHash = "$2a$11$HsXwOXfhvHwkqYK5tFfmDOuGlLQBU9B5V8H5jF5Y5Y5Y5Y5Y5Y5Y5"
-        });
     }
 }
