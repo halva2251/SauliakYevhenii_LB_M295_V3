@@ -1,0 +1,6 @@
+@SauliakYevheniiLB_295API_HostAddress = http://localhost:5123
+
+GET {{SauliakYevheniiLB_295API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
