@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SauliakYevheniiLB_295.Models;
+namespace SauliakYevheniiLB_295API.Models;
 
 public class User
 {

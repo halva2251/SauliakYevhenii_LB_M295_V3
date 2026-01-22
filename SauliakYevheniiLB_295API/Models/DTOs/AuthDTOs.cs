@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SauliakYevheniiLB_295.Models.DTOs;
+namespace SauliakYevheniiLB_295API.Models.DTOs;
 
 public class LoginRequest
 {
