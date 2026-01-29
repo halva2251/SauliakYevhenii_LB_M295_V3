@@ -1,0 +1,597 @@
+{
+	"id": "93fbe44d-36ad-46b3-bf54-a253c7a6988b",
+	"name": "Overwatch Hero API Tests",
+	"timestamp": "2026-01-29T08:42:54.409Z",
+	"collection_id": "50738043-8e404fc8-0a28-40b1-95f4-8fded008ad91",
+	"folder_id": 0,
+	"environment_id": "0",
+	"totalPass": 25,
+	"delay": 0,
+	"persist": true,
+	"status": "finished",
+	"startedAt": "2026-01-29T08:42:51.084Z",
+	"totalFail": 0,
+	"results": [
+		{
+			"id": "793a97a9-27e3-420e-a5cb-81c67c28e354",
+			"name": "Login (Valid)",
+			"url": "https://localhost:7283/api/auth/login",
+			"time": 484,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Response has accessToken": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response has accessToken": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				484
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Response has accessToken": true
+				}
+			]
+		},
+		{
+			"id": "59d85e0c-9888-42e3-a08f-a4b4de1ceaae",
+			"name": "Login (Invalid Password)",
+			"url": "https://localhost:7283/api/auth/login",
+			"time": 425,
+			"responseCode": {
+				"code": 401,
+				"name": "Unauthorized"
+			},
+			"tests": {
+				"Status code is 401": true,
+				"Response has error message": true
+			},
+			"testPassFailCounts": {
+				"Status code is 401": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response has error message": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				425
+			],
+			"allTests": [
+				{
+					"Status code is 401": true,
+					"Response has error message": true
+				}
+			]
+		},
+		{
+			"id": "59a401e7-22a8-4c21-9910-ad6af6810205",
+			"name": "Login (Empty Body)",
+			"url": "https://localhost:7283/api/auth/login",
+			"time": 5,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Status code is 400": true
+			},
+			"testPassFailCounts": {
+				"Status code is 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"Status code is 400": true
+				}
+			]
+		},
+		{
+			"id": "2d445d15-149f-49c6-8b2a-1304da7f8ffe",
+			"name": "Refresh Token",
+			"url": "https://localhost:7283/api/auth/refresh",
+			"time": 3,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Response has new accessToken": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response has new accessToken": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Response has new accessToken": true
+				}
+			]
+		},
+		{
+			"id": "a2323014-4df2-4318-870a-5342671c5d5b",
+			"name": "GET All Heroes",
+			"url": "https://localhost:7283/api/heroes",
+			"time": 22,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Response is array": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response is array": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				22
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Response is array": true
+				}
+			]
+		},
+		{
+			"id": "6b1b1c99-4906-4d07-8f65-85904edda85b",
+			"name": "GET Heroes by Role (Tank)",
+			"url": "https://localhost:7283/api/heroes?role=tank",
+			"time": 166,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"All heroes are tanks": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"All heroes are tanks": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				166
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"All heroes are tanks": true
+				}
+			]
+		},
+		{
+			"id": "a055379f-d940-4ea6-8f22-23919f56a83b",
+			"name": "GET Hero by ID (Existing)",
+			"url": "https://localhost:7283/api/heroes/5",
+			"time": 16,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Response has hero properties": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response has hero properties": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				16
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Response has hero properties": true
+				}
+			]
+		},
+		{
+			"id": "660663b2-fd07-4314-bd9b-86085577f7d2",
+			"name": "GET Hero by ID (Not Found)",
+			"url": "https://localhost:7283/api/heroes/9999",
+			"time": 32,
+			"responseCode": {
+				"code": 404,
+				"name": "Not Found"
+			},
+			"tests": {
+				"Status code is 404": true,
+				"Response has error message": true
+			},
+			"testPassFailCounts": {
+				"Status code is 404": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response has error message": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				32
+			],
+			"allTests": [
+				{
+					"Status code is 404": true,
+					"Response has error message": true
+				}
+			]
+		},
+		{
+			"id": "0c97a696-09b9-4094-b357-cd055fc58cd7",
+			"name": "POST Create Hero (With Token)",
+			"url": "https://localhost:7283/api/heroes",
+			"time": 57,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Status code is 201": true,
+				"Response has hero with ID": true
+			},
+			"testPassFailCounts": {
+				"Status code is 201": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response has hero with ID": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				57
+			],
+			"allTests": [
+				{
+					"Status code is 201": true,
+					"Response has hero with ID": true
+				}
+			]
+		},
+		{
+			"id": "5a24e623-fbb9-4e73-897e-4b055ea545fd",
+			"name": "PUT Update Hero (With Token)",
+			"url": "https://localhost:7283/api/heroes/6",
+			"time": 44,
+			"responseCode": {
+				"code": 204,
+				"name": "No Content"
+			},
+			"tests": {
+				"Status code is 204": true
+			},
+			"testPassFailCounts": {
+				"Status code is 204": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				44
+			],
+			"allTests": [
+				{
+					"Status code is 204": true
+				}
+			]
+		},
+		{
+			"id": "eb10313d-023b-49d1-b65c-33252e27e18c",
+			"name": "DELETE Hero (With Token)",
+			"url": "https://localhost:7283/api/heroes/6",
+			"time": 38,
+			"responseCode": {
+				"code": 204,
+				"name": "No Content"
+			},
+			"tests": {
+				"Status code is 204": true
+			},
+			"testPassFailCounts": {
+				"Status code is 204": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				38
+			],
+			"allTests": [
+				{
+					"Status code is 204": true
+				}
+			]
+		},
+		{
+			"id": "6ba7c464-adcd-4a8d-bf30-df1f9f51202d",
+			"name": "POST Create Hero (No Token)",
+			"url": "https://localhost:7283/api/heroes",
+			"time": 3,
+			"responseCode": {
+				"code": 401,
+				"name": "Unauthorized"
+			},
+			"tests": {
+				"Status code is 401": true
+			},
+			"testPassFailCounts": {
+				"Status code is 401": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"Status code is 401": true
+				}
+			]
+		},
+		{
+			"id": "60f44f33-1e07-42e6-8cf3-8fa545b8eb7a",
+			"name": "PUT Update Hero (No Token)",
+			"url": "https://localhost:7283/api/heroes/1",
+			"time": 3,
+			"responseCode": {
+				"code": 401,
+				"name": "Unauthorized"
+			},
+			"tests": {
+				"Status code is 401": true
+			},
+			"testPassFailCounts": {
+				"Status code is 401": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"Status code is 401": true
+				}
+			]
+		},
+		{
+			"id": "e2d19fcc-6354-4ec0-b943-a834eae40a22",
+			"name": "DELETE Hero (No Token)",
+			"url": "https://localhost:7283/api/heroes/1",
+			"time": 3,
+			"responseCode": {
+				"code": 401,
+				"name": "Unauthorized"
+			},
+			"tests": {
+				"Status code is 401": true
+			},
+			"testPassFailCounts": {
+				"Status code is 401": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"Status code is 401": true
+				}
+			]
+		},
+		{
+			"id": "35a6e5fd-3421-4f1b-81f8-17b1f867227d",
+			"name": "POST Hero without Name",
+			"url": "https://localhost:7283/api/heroes",
+			"time": 5,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Status code is 400": true
+			},
+			"testPassFailCounts": {
+				"Status code is 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"Status code is 400": true
+				}
+			]
+		},
+		{
+			"id": "16e2843a-462b-4702-9306-70671ff45781",
+			"name": "POST Hero without Role",
+			"url": "https://localhost:7283/api/heroes",
+			"time": 4,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Status code is 400": true
+			},
+			"testPassFailCounts": {
+				"Status code is 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Status code is 400": true
+				}
+			]
+		},
+		{
+			"id": "62087cd6-6f92-4a7b-937f-b98abd769ddb",
+			"name": "PUT Hero with ID Mismatch",
+			"url": "https://localhost:7283/api/heroes/1",
+			"time": 5,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Status code is 400": true
+			},
+			"testPassFailCounts": {
+				"Status code is 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"Status code is 400": true
+				}
+			]
+		}
+	],
+	"count": 1,
+	"totalTime": 1315,
+	"collection": {
+		"requests": [
+			{
+				"id": "793a97a9-27e3-420e-a5cb-81c67c28e354",
+				"method": "POST"
+			},
+			{
+				"id": "59d85e0c-9888-42e3-a08f-a4b4de1ceaae",
+				"method": "POST"
+			},
+			{
+				"id": "59a401e7-22a8-4c21-9910-ad6af6810205",
+				"method": "POST"
+			},
+			{
+				"id": "2d445d15-149f-49c6-8b2a-1304da7f8ffe",
+				"method": "POST"
+			},
+			{
+				"id": "a2323014-4df2-4318-870a-5342671c5d5b",
+				"method": "GET"
+			},
+			{
+				"id": "6b1b1c99-4906-4d07-8f65-85904edda85b",
+				"method": "GET"
+			},
+			{
+				"id": "a055379f-d940-4ea6-8f22-23919f56a83b",
+				"method": "GET"
+			},
+			{
+				"id": "660663b2-fd07-4314-bd9b-86085577f7d2",
+				"method": "GET"
+			},
+			{
+				"id": "0c97a696-09b9-4094-b357-cd055fc58cd7",
+				"method": "POST"
+			},
+			{
+				"id": "5a24e623-fbb9-4e73-897e-4b055ea545fd",
+				"method": "PUT"
+			},
+			{
+				"id": "eb10313d-023b-49d1-b65c-33252e27e18c",
+				"method": "DELETE"
+			},
+			{
+				"id": "6ba7c464-adcd-4a8d-bf30-df1f9f51202d",
+				"method": "POST"
+			},
+			{
+				"id": "60f44f33-1e07-42e6-8cf3-8fa545b8eb7a",
+				"method": "PUT"
+			},
+			{
+				"id": "e2d19fcc-6354-4ec0-b943-a834eae40a22",
+				"method": "DELETE"
+			},
+			{
+				"id": "35a6e5fd-3421-4f1b-81f8-17b1f867227d",
+				"method": "POST"
+			},
+			{
+				"id": "16e2843a-462b-4702-9306-70671ff45781",
+				"method": "POST"
+			},
+			{
+				"id": "62087cd6-6f92-4a7b-937f-b98abd769ddb",
+				"method": "PUT"
+			}
+		]
+	}
+}
