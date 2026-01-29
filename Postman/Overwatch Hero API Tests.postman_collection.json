@@ -1,0 +1,775 @@
+{
+  "info": {
+    "_postman_id": "8e404fc8-0a28-40b1-95f4-8fded008ad91",
+    "name": "Overwatch Hero API Tests",
+    "description": "LB M295 - Sauliak Yevhenii - API Tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "50738043",
+    "_collection_link": "https://go.postman.co/collection/50738043-8e404fc8-0a28-40b1-95f4-8fded008ad91?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login (Valid)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has accessToken\", function () {",
+                  "    pm.expect(pm.response.json()).to.have.property(\"accessToken\");",
+                  "});",
+                  "",
+                  "// Save token for other requests",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set(\"token\", jsonData.accessToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"test\",\n    \"password\": \"test123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login (Invalid Password)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has error message\", function () {",
+                  "    pm.expect(pm.response.json()).to.have.property(\"message\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"test\",\n    \"password\": \"wrongpassword\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login (Empty Body)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has new accessToken\", function () {",
+                  "    pm.expect(pm.response.json()).to.have.property(\"accessToken\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"refreshToken\": \"any-refresh-token\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/refresh",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "refresh"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Heroes - Public (No Auth)",
+      "item": [
+        {
+          "name": "GET All Heroes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is array\", function () {",
+                  "    pm.expect(pm.response.json()).to.be.an(\"array\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/heroes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "heroes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Heroes by Role (Tank)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"All heroes are tanks\", function () {",
+                  "    var heroes = pm.response.json();",
+                  "    heroes.forEach(function(hero) {",
+                  "        pm.expect(hero.role.toLowerCase()).to.equal(\"tank\");",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/heroes?role=tank",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "heroes"
+              ],
+              "query": [
+                {
+                  "key": "role",
+                  "value": "tank"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Hero by ID (Existing)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has hero properties\", function () {",
+                  "    var hero = pm.response.json();",
+                  "    pm.expect(hero).to.have.property(\"id\");",
+                  "    pm.expect(hero).to.have.property(\"name\");",
+                  "    pm.expect(hero).to.have.property(\"role\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/heroes/5",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "heroes",
+                "5"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Hero by ID (Not Found)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has error message\", function () {",
+                  "    pm.expect(pm.response.json()).to.have.property(\"message\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/heroes/9999",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "heroes",
+                "9999"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Heroes - Protected (With Auth)",
+      "item": [
+        {
+          "name": "POST Create Hero (With Token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has hero with ID\", function () {",
+                  "    var hero = pm.response.json();",
+                  "    pm.expect(hero).to.have.property(\"id\");",
+                  "    pm.expect(hero.name).to.equal(\"Test Hero\");",
+                  "});",
+                  "",
+                  "// Save hero ID for later tests",
+                  "if (pm.response.code === 201) {",
+                  "    var hero = pm.response.json();",
+                  "    pm.collectionVariables.set(\"test_hero_id\", hero.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Test Hero\",\n    \"role\": \"damage\",\n    \"portrait\": \"https://example.com/test.png\",\n    \"description\": \"A test hero for automated testing\",\n    \"health\": 200,\n    \"armor\": 50,\n    \"shields\": 0,\n    \"abilities\": [\n        { \"name\": \"Test Ability 1\" },\n        { \"name\": \"Test Ability 2\" }\n    ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/heroes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "heroes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT Update Hero (With Token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id\": {{test_hero_id}},\n    \"name\": \"Test Hero Updated\",\n    \"role\": \"tank\",\n    \"portrait\": \"https://example.com/test-updated.png\",\n    \"description\": \"Updated test hero\",\n    \"health\": 500,\n    \"armor\": 100,\n    \"shields\": 50,\n    \"abilities\": [\n        { \"name\": \"Updated Ability\" }\n    ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/heroes/{{test_hero_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "heroes",
+                "{{test_hero_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE Hero (With Token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/heroes/{{test_hero_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "heroes",
+                "{{test_hero_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Heroes - Unauthorized (No Token)",
+      "item": [
+        {
+          "name": "POST Create Hero (No Token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Unauthorized Hero\",\n    \"role\": \"damage\",\n    \"health\": 200,\n    \"armor\": 0,\n    \"shields\": 0,\n    \"abilities\": []\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/heroes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "heroes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT Update Hero (No Token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id\": 1,\n    \"name\": \"Unauthorized Update\",\n    \"role\": \"damage\",\n    \"health\": 200,\n    \"armor\": 0,\n    \"shields\": 0,\n    \"abilities\": []\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/heroes/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "heroes",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE Hero (No Token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/heroes/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "heroes",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Validation Tests",
+      "item": [
+        {
+          "name": "POST Hero without Name",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"role\": \"damage\",\n    \"health\": 200,\n    \"armor\": 0,\n    \"shields\": 0,\n    \"abilities\": []\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/heroes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "heroes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Hero without Role",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"No Role Hero\",\n    \"health\": 200,\n    \"armor\": 0,\n    \"shields\": 0,\n    \"abilities\": []\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/heroes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "heroes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT Hero with ID Mismatch",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id\": 999,\n    \"name\": \"ID Mismatch Hero\",\n    \"role\": \"damage\",\n    \"health\": 200,\n    \"armor\": 0,\n    \"shields\": 0,\n    \"abilities\": []\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/heroes/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "heroes",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://localhost:7283",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "test_hero_id",
+      "value": ""
+    }
+  ]
+}
