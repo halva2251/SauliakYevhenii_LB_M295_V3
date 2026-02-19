@@ -12,6 +12,7 @@ public class AppDbContext : DbContext
     public DbSet<Hero> Heroes { get; set; }
     public DbSet<Ability> Abilities { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -44,6 +45,26 @@ public class AppDbContext : DbContext
             entity.HasKey(u => u.Id);
             entity.Property(u => u.Username).IsRequired().HasMaxLength(50);
             entity.HasIndex(u => u.Username).IsUnique();
+
+            // Seed default admin user
+            entity.HasData(new User
+            {
+                Id = 1,
+                Username = "admin",
+                PasswordHash = "$2a$11$HsXwOXfhvHwkqYK5tFfmDOuGlLQBU9B5V8H5jF5Y5Y5Y5Y5Y5Y5Y5"
+            });
+        });
+
+        // RefreshToken Configuration
+        modelBuilder.Entity<RefreshToken>(entity =>
+        {
+            entity.HasKey(r => r.Id);
+            entity.Property(r => r.Token).IsRequired();
+            entity.HasIndex(r => r.Token).IsUnique();
+            entity.HasOne(r => r.User)
+                  .WithMany()
+                  .HasForeignKey(r => r.UserId)
+                  .OnDelete(DeleteBehavior.Cascade);
         });
 
     }

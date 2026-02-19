@@ -49,40 +49,76 @@ public class AuthController : ControllerBase
 
         // Generate tokens
         var accessToken = GenerateAccessToken(user);
-        var refreshToken = GenerateRefreshToken();
+        var refreshTokenString = GenerateRefreshToken();
+
+        var refreshTokenDays = int.Parse(_configuration["Jwt:RefreshTokenExpirationDays"] ?? "7");
+
+        // Save refresh token in database
+        var refreshToken = new RefreshToken
+        {
+            Token = refreshTokenString,
+            UserId = user.Id,
+            ExpiresAt = DateTime.UtcNow.AddDays(refreshTokenDays),
+            CreatedAt = DateTime.UtcNow
+        };
+        _context.RefreshTokens.Add(refreshToken);
+        await _context.SaveChangesAsync();
 
         var expirationMinutes = int.Parse(_configuration["Jwt:AccessTokenExpirationMinutes"] ?? "15");
 
         return Ok(new LoginResponse
         {
             AccessToken = accessToken,
-            RefreshToken = refreshToken,
+            RefreshToken = refreshTokenString,
             ExpiresAt = DateTime.UtcNow.AddMinutes(expirationMinutes)
         });
     }
 
     // POST: api/auth/refresh
     [HttpPost("refresh")]
-    public ActionResult<LoginResponse> Refresh(RefreshRequest request)
+    public async Task<ActionResult<LoginResponse>> Refresh(RefreshRequest request)
     {
-        // In einer echten Anwendung würde man den Refresh Token validieren
-        // Für die LB reicht eine vereinfachte Implementierung
-
         if (string.IsNullOrEmpty(request.RefreshToken))
         {
             return BadRequest(new { message = "Refresh Token erforderlich" });
         }
 
-        // Generate new tokens (simplified - in production you'd validate the refresh token)
-        var newAccessToken = GenerateAccessToken(new User { Id = 1, Username = "admin" });
-        var newRefreshToken = GenerateRefreshToken();
+        // Validate refresh token against database
+        var storedToken = await _context.RefreshTokens
+            .Include(r => r.User)
+            .FirstOrDefaultAsync(r => r.Token == request.RefreshToken);
+
+        if (storedToken == null || storedToken.IsRevoked || storedToken.ExpiresAt < DateTime.UtcNow)
+        {
+            return Unauthorized(new { message = "Ungültiger oder abgelaufener Refresh Token" });
+        }
+
+        // Revoke old refresh token
+        storedToken.IsRevoked = true;
+
+        // Generate new tokens
+        var newAccessToken = GenerateAccessToken(storedToken.User!);
+        var newRefreshTokenString = GenerateRefreshToken();
+
+        var refreshTokenDays = int.Parse(_configuration["Jwt:RefreshTokenExpirationDays"] ?? "7");
+
+        // Save new refresh token
+        var newRefreshToken = new RefreshToken
+        {
+            Token = newRefreshTokenString,
+            UserId = storedToken.UserId,
+            ExpiresAt = DateTime.UtcNow.AddDays(refreshTokenDays),
+            CreatedAt = DateTime.UtcNow
+        };
+        _context.RefreshTokens.Add(newRefreshToken);
+        await _context.SaveChangesAsync();
 
         var expirationMinutes = int.Parse(_configuration["Jwt:AccessTokenExpirationMinutes"] ?? "15");
 
         return Ok(new LoginResponse
         {
             AccessToken = newAccessToken,
-            RefreshToken = newRefreshToken,
+            RefreshToken = newRefreshTokenString,
             ExpiresAt = DateTime.UtcNow.AddMinutes(expirationMinutes)
         });
     }

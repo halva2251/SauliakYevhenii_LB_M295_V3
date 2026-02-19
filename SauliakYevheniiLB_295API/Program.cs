@@ -22,7 +22,7 @@ builder.Services.AddSwaggerGen(c =>
     {
         Title = "Overwatch Hero API",
         Version = "v1",
-        Description = "API für Overwatch Heroes - LB M295 von Sauliak Yevhenii"
+        Description = "API fï¿½r Overwatch Heroes - LB M295 von Sauliak Yevhenii"
     });
 
     // JWT Authentication in Swagger
@@ -82,11 +82,11 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Ensure Database is created
+// Apply pending migrations
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    dbContext.Database.EnsureCreated();
+    dbContext.Database.Migrate();
 }
 
 // Configure Pipeline
