@@ -10,8 +10,12 @@ using System.Text;
 
 namespace SauliakYevheniiLB_295API.Controllers;
 
+/// <summary>
+/// Controller für Authentifizierung (Login, Register, Token Refresh)
+/// </summary>
 [Route("api/[controller]")]
 [ApiController]
+[Produces("application/json")]
 public class AuthController : ControllerBase
 {
     private readonly AppDbContext _context;
@@ -23,8 +27,15 @@ public class AuthController : ControllerBase
         _configuration = configuration;
     }
 
-    // POST: api/auth/login
+    /// <summary>
+    /// Authentifiziert einen Benutzer und gibt JWT Access Token sowie Refresh Token zurück
+    /// </summary>
+    /// <param name="request">Login-Daten (Username und Password)</param>
+    /// <returns>Access Token, Refresh Token und Ablaufzeit</returns>
     [HttpPost("login")]
+    [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<LoginResponse>> Login(LoginRequest request)
     {
         if (!ModelState.IsValid)
@@ -51,6 +62,12 @@ public class AuthController : ControllerBase
         var accessToken = GenerateAccessToken(user);
         var refreshToken = GenerateRefreshToken();
 
+        // Refresh Token in der Datenbank speichern
+        var refreshTokenExpiryDays = int.Parse(_configuration["Jwt:RefreshTokenExpirationDays"] ?? "7");
+        user.RefreshToken = refreshToken;
+        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(refreshTokenExpiryDays);
+        await _context.SaveChangesAsync();
+
         var expirationMinutes = int.Parse(_configuration["Jwt:AccessTokenExpirationMinutes"] ?? "15");
 
         return Ok(new LoginResponse
@@ -61,21 +78,50 @@ public class AuthController : ControllerBase
         });
     }
 
-    // POST: api/auth/refresh
+    /// <summary>
+    /// Generiert ein neues Access Token mittels eines gültigen Refresh Tokens
+    /// </summary>
+    /// <param name="request">Das Refresh Token</param>
+    /// <returns>Neues Access Token, neues Refresh Token und Ablaufzeit</returns>
     [HttpPost("refresh")]
-    public ActionResult<LoginResponse> Refresh(RefreshRequest request)
+    [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<LoginResponse>> Refresh(RefreshRequest request)
     {
-        // In einer echten Anwendung würde man den Refresh Token validieren
-        // Für die LB reicht eine vereinfachte Implementierung
-
         if (string.IsNullOrEmpty(request.RefreshToken))
         {
             return BadRequest(new { message = "Refresh Token erforderlich" });
         }
 
-        // Generate new tokens (simplified - in production you'd validate the refresh token)
-        var newAccessToken = GenerateAccessToken(new User { Id = 1, Username = "admin" });
+        // Refresh Token in der Datenbank suchen und validieren
+        var user = await _context.Users
+            .FirstOrDefaultAsync(u => u.RefreshToken == request.RefreshToken);
+
+        if (user == null)
+        {
+            return Unauthorized(new { message = "Ungültiger Refresh Token" });
+        }
+
+        if (user.RefreshTokenExpiryTime < DateTime.UtcNow)
+        {
+            // Abgelaufenen Token aus DB entfernen
+            user.RefreshToken = null;
+            user.RefreshTokenExpiryTime = null;
+            await _context.SaveChangesAsync();
+
+            return Unauthorized(new { message = "Refresh Token ist abgelaufen" });
+        }
+
+        // Neue Tokens generieren
+        var newAccessToken = GenerateAccessToken(user);
         var newRefreshToken = GenerateRefreshToken();
+
+        // Neuen Refresh Token in DB speichern (Token Rotation)
+        var refreshTokenExpiryDays = int.Parse(_configuration["Jwt:RefreshTokenExpirationDays"] ?? "7");
+        user.RefreshToken = newRefreshToken;
+        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(refreshTokenExpiryDays);
+        await _context.SaveChangesAsync();
 
         var expirationMinutes = int.Parse(_configuration["Jwt:AccessTokenExpirationMinutes"] ?? "15");
 
@@ -87,8 +133,14 @@ public class AuthController : ControllerBase
         });
     }
 
-    // POST: api/auth/register (Optional - für initiale User-Erstellung)
+    /// <summary>
+    /// Registriert einen neuen Benutzer
+    /// </summary>
+    /// <param name="request">Registrierungsdaten (Username und Password)</param>
     [HttpPost("register")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult> Register(LoginRequest request)
     {
         if (!ModelState.IsValid)

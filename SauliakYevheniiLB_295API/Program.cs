@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SauliakYevheniiLB_295API.Data;
+using System.Reflection;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,8 +23,12 @@ builder.Services.AddSwaggerGen(c =>
     {
         Title = "Overwatch Hero API",
         Version = "v1",
-        Description = "API für Overwatch Heroes - LB M295 von Sauliak Yevhenii"
+        Description = "API fÃ¼r Overwatch Heroes - LB M295 von Sauliak Yevhenii"
     });
+
+    // XML-Kommentare in Swagger einbinden
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 
     // JWT Authentication in Swagger
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme

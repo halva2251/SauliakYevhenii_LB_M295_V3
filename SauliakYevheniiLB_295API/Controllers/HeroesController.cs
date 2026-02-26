@@ -6,8 +6,12 @@ using SauliakYevheniiLB_295API.Models;
 
 namespace SauliakYevheniiLB_295API.Controllers;
 
+/// <summary>
+/// Controller für die Verwaltung von Overwatch Heroes
+/// </summary>
 [Route("api/[controller]")]
 [ApiController]
+[Produces("application/json")]
 public class HeroesController : ControllerBase
 {
     private readonly AppDbContext _context;
@@ -17,8 +21,14 @@ public class HeroesController : ControllerBase
         _context = context;
     }
 
-    // GET: api/heroes
+    /// <summary>
+    /// Gibt alle Heroes zurück, optional gefiltert nach Rolle oder Name
+    /// </summary>
+    /// <param name="role">Filtert nach Rolle (tank, damage, support)</param>
+    /// <param name="name">Filtert nach Name (enthält)</param>
+    /// <returns>Liste von Heroes</returns>
     [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<Hero>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<Hero>>> GetHeroes(
         [FromQuery] string? role,
         [FromQuery] string? name)
@@ -40,8 +50,14 @@ public class HeroesController : ControllerBase
         return await query.ToListAsync();
     }
 
-    // GET: api/heroes/5
+    /// <summary>
+    /// Gibt einen einzelnen Hero anhand seiner ID zurück
+    /// </summary>
+    /// <param name="id">Die ID des Heroes</param>
+    /// <returns>Der gefundene Hero</returns>
     [HttpGet("{id}")]
+    [ProducesResponseType(typeof(Hero), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Hero>> GetHero(int id)
     {
         var hero = await _context.Heroes
@@ -56,9 +72,16 @@ public class HeroesController : ControllerBase
         return hero;
     }
 
-    // POST: api/heroes
+    /// <summary>
+    /// Erstellt einen neuen Hero (Authentifizierung erforderlich)
+    /// </summary>
+    /// <param name="hero">Der zu erstellende Hero</param>
+    /// <returns>Der erstellte Hero</returns>
     [HttpPost]
     [Authorize]
+    [ProducesResponseType(typeof(Hero), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<Hero>> CreateHero(Hero hero)
     {
         if (!ModelState.IsValid)
@@ -72,9 +95,17 @@ public class HeroesController : ControllerBase
         return CreatedAtAction(nameof(GetHero), new { id = hero.Id }, hero);
     }
 
-    // PUT: api/heroes/5
+    /// <summary>
+    /// Aktualisiert einen bestehenden Hero (Authentifizierung erforderlich)
+    /// </summary>
+    /// <param name="id">Die ID des zu aktualisierenden Heroes</param>
+    /// <param name="hero">Die aktualisierten Hero-Daten</param>
     [HttpPut("{id}")]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateHero(int id, Hero hero)
     {
         if (id != hero.Id)
@@ -126,9 +157,15 @@ public class HeroesController : ControllerBase
         return NoContent();
     }
 
-    // DELETE: api/heroes/5
+    /// <summary>
+    /// Löscht einen Hero anhand seiner ID (Authentifizierung erforderlich)
+    /// </summary>
+    /// <param name="id">Die ID des zu löschenden Heroes</param>
     [HttpDelete("{id}")]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteHero(int id)
     {
         var hero = await _context.Heroes.FindAsync(id);

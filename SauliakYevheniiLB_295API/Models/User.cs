@@ -12,4 +12,14 @@ public class User
 
     [Required]
     public string PasswordHash { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gespeicherter Refresh Token für Token-Validierung
+    /// </summary>
+    public string? RefreshToken { get; set; }
+
+    /// <summary>
+    /// Ablaufzeit des Refresh Tokens
+    /// </summary>
+    public DateTime? RefreshTokenExpiryTime { get; set; }
 }
