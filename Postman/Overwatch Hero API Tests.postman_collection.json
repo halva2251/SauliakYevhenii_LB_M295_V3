@@ -26,13 +26,16 @@
                   "    pm.expect(pm.response.json()).to.have.property(\"accessToken\");",
                   "});",
                   "",
-                  "// Save token for other requests",
+                  "// Save tokens for other requests",
                   "if (pm.response.code === 200) {",
                   "    var jsonData = pm.response.json();",
                   "    pm.collectionVariables.set(\"token\", jsonData.accessToken);",
+                  "    pm.collectionVariables.set(\"refresh_token\", jsonData.refreshToken);",
                   "}"
                 ],
-                "type": "text/javascript"
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
@@ -163,7 +166,9 @@
                   "    pm.expect(pm.response.json()).to.have.property(\"accessToken\");",
                   "});"
                 ],
-                "type": "text/javascript"
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
@@ -177,7 +182,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"refreshToken\": \"any-refresh-token\"\n}"
+              "raw": "{\n    \"refreshToken\": \"{{refresh_token}}\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/auth/refresh",
@@ -769,6 +774,10 @@
     },
     {
       "key": "test_hero_id",
+      "value": ""
+    },
+    {
+      "key": "refresh_token",
       "value": ""
     }
   ]
